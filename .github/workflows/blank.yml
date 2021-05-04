@@ -1,0 +1,27 @@
+on:
+  schedule:
+      - cron: "0 * * * *"
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieve statistics
+        run: |
+          for repository in
+            dvcorg/cml-gpu-py3-cloud-runner
+            dvcorg/cml-gpu-cloud-runner
+            dvcorg/cml-py3-cloud-runner
+            dvcorg/cml-cloud-runner
+          do
+            curl --silent --location https://hub.docker.com/v2/repositories/$repository |
+            jq .pull_count | paste <(date +%s) - >> $repository
+          done
+      - name: Commit statistics
+        run: |
+          git config --local user.name "GitHub Action"
+          git config --local user.email "action@github.com"
+          git add --all && git commit --message "Update data"
+          git push
