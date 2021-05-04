@@ -1,27 +1,22 @@
 on:
   schedule:
-      - cron: "0 * * * *"
+  - cron: "0 * * * *"
   workflow_dispatch:
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Retrieve
-        run: |
-          while read repository; do
-            curl --silent --location "https://hub.docker.com/v2/repositories/$repository" |
-            jq .pull_count | paste <(date +%s) - >> "$(basename "$repository")"
-          done <<-END
-            dvcorg/cml-gpu-py3-cloud-runner
-            dvcorg/cml-gpu-cloud-runner
-            dvcorg/cml-py3-cloud-runner
-            dvcorg/cml-cloud-runner
-          END
-      - name: Commit
-        run: |
-          git config --local user.name "GitHub Action"
-          git config --local user.email "action@github.com"
-          git add --all && git commit --message "Update data"
-          git push
+    - uses: actions/checkout@v2
+    - name: Retrieve
+      run: |
+        for repository in gpu-py3-cloud-runner gpu-cloud-runner py3-cloud-runner cloud-runner; do
+          curl -L "https://hub.docker.com/v2/repositories/dvcorg/cml-$repository" \
+          | jq .pull_count | paste <(date +%s) - >> "cml-$repository"
+        done
+    - name: Commit
+      run: |
+        git config --local user.name "Olivaw[bot]"
+        git config --local user.email "64868532+Olivaw[bot]@users.noreply.github.com"
+        git commit -am cron
+        git push
