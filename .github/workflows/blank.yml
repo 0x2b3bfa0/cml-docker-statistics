@@ -12,7 +12,7 @@ jobs:
         run: |
           while read repository; do
             curl --silent --location "https://hub.docker.com/v2/repositories/$repository" |
-            jq .pull_count | paste <(date +%s) - >> "$(basename repository)"
+            jq .pull_count | paste <(date +%s) - >> "$(basename "$repository")"
           done <<-END
             dvcorg/cml-gpu-py3-cloud-runner
             dvcorg/cml-gpu-cloud-runner
