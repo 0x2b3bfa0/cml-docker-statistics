@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Retrieve statistics
+      - name: Retrieve
         run: |
           while read repository; do
             curl --silent --location "https://hub.docker.com/v2/repositories/$repository" |
@@ -19,7 +19,7 @@ jobs:
             dvcorg/cml-py3-cloud-runner
             dvcorg/cml-cloud-runner
           END
-      - name: Commit statistics
+      - name: Commit
         run: |
           git config --local user.name "GitHub Action"
           git config --local user.email "action@github.com"
