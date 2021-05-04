@@ -10,15 +10,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Retrieve statistics
         run: |
-          for repository in
+          while read repository; do
+            curl --silent --location "https://hub.docker.com/v2/repositories/$repository" |
+            jq .pull_count | paste <(date +%s) - >> "$(basename repository)"
+          done <<-END
             dvcorg/cml-gpu-py3-cloud-runner
             dvcorg/cml-gpu-cloud-runner
             dvcorg/cml-py3-cloud-runner
             dvcorg/cml-cloud-runner
-          do
-            curl --silent --location https://hub.docker.com/v2/repositories/$repository |
-            jq .pull_count | paste <(date +%s) - >> $repository
-          done
+          END
       - name: Commit statistics
         run: |
           git config --local user.name "GitHub Action"
