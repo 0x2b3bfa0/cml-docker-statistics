@@ -11,15 +11,15 @@ jobs:
     - name: Retrieve
       run: >-
         for repository in
-          cml-gpu-py3-cloud-runner
-          cml-gpu-cloud-runner
-          cml-py3-cloud-runner
-          cml-cloud-runner;
+        cml-gpu-py3-cloud-runner
+        cml-gpu-cloud-runner
+        cml-py3-cloud-runner
+        cml-cloud-runner;
         do
-          curl --location "https://hub.docker.com/v2/repositories/dvcorg/$repository"
-          | jq .pull_count
-          | paste <(date +%s) -
-          >> "$repository"
+        curl --location "https://hub.docker.com/v2/repositories/dvcorg/$repository"
+        | jq .pull_count
+        | paste <(date +%s) -
+        >> "$repository"
         done
     - name: Commit
       run: |
